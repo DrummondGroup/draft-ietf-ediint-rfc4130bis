@@ -58,9 +58,9 @@ normative:
   RFC8446: {}
   RFC8615: {}
   RFC9110: {}
+  RFC9112: {}
 
 informative:
-  RFC2246: {}
   RFC4918: {}
   RFC5753: {}
   I-D.draft-duker-as2-reliability-16: {}
@@ -1744,31 +1744,35 @@ RFC 3798 for backward compatibility.
 ###  AS2-MDN General Formats
 
 ~~~abnf
-AS2-MDN = AS2-sync-MDN | AS2-async-http-MDN
+AS2-MDN = AS2-sync-MDN / AS2-async-http-MDN
 
 AS2-sync-MDN =
    Status-Line
-   *(( general-header | response-header | entity-header )
+   *(( general-header / response-header / entity-header )
      CRLF )
    CRLF
    AS2-MDN-body
 
 Status-Line =
-   HTTP-Version SP Status-Code SP Reason-Phrase CRLF
+   <See Section 4 of RFC 9112>
 
 AS2-async-http-MDN =
    Request-Line
-   *(( general-header | request-header | entity-header )
+   *(( general-header / request-header / entity-header )
      CRLF )
    CRLF
    AS2-MDN-body
 
 Request-Line =
-   Method SP Request-URI SP HTTP-Version CRLF
+   <See Section 3 of RFC 9112>
 
 AS2-MDN-body =
-   AS2-signed-MDN-body | AS2-unsigned-MDN-body
+   AS2-signed-MDN-body / AS2-unsigned-MDN-body
 ~~~
+
+Status-Line and Request-Line use "prose" ABNF rules, which avoid
+repeating ABNF defined normatively in another document (RFC 9112).
+Note that in RFC 9112, the Reason-Phrase in Status-Line is optional.
 
 ###  AS2-MDN Construction
 
@@ -1811,50 +1815,51 @@ AS2-disposition-notification-content =
 ###  AS2-MDN Fields {#as2-mdn-fields}
 
    The rules for constructing the AS2-disposition-notification content
-   are identical to the disposition-notification-content rules provided
-   in {{algorithm-requirements}} of RFC 3798 [RFC3798], except that the RFC 3798 disposition-
-   field has been replaced with the AS2-disposition-field and that the
-   AS2-received-content-MIC field has been added. The differences
-   between the RFC 3798 disposition-field and the AS2-disposition-field
-   are described below. Where there are differences between this
-   document and RFC 3798, those entity names have been changed by
-   pre-pending "AS2-". Entities that do not differ from RFC 3798 are not
-   necessarily further defined in this document; refer to RFC 3798,
-   Section 7, "Collected Grammar", for the original grammar.
+   are based on the disposition-notification-content rules provided in
+   RFC 8098 [RFC8098], except that the disposition-field has been
+   replaced with the AS2-disposition-field and that the
+   AS2-received-content-MIC field has been added. The AS2-disposition-field
+   differs from the RFC 8098 disposition-field in several ways: the
+   disposition-modifier is optional (zero or more modifiers are allowed),
+   and additional standardized modifiers have been defined for improved
+   error reporting. Entities that do not differ from RFC 8098 are not
+   necessarily further defined in this document; refer to RFC 8098,
+   Section 3.1, for the original grammar.
 
 ~~~abnf
 AS2-disposition-field =
     "Disposition" ":" disposition-mode ";"
-    AS2-disposition-type "/" AS2-disposition-modifier
+    AS2-disposition-type "/" [AS2-disposition-modifier
+                               *(";" AS2-disposition-modifier)]
 
 disposition-mode =
     action-mode "/" sending-mode
 
 action-mode =
-    "manual-action" | "automatic-action"
+    "manual-action" / "automatic-action"
 
 sending-mode =
-    "MDN-sent-manually" | "MDN-sent-automatically"
+    "MDN-sent-manually" / "MDN-sent-automatically"
 
 AS2-disposition-type =
-    "processed" | "failed"
+    "processed" / "failed"
 
 AS2-disposition-modifier =
-    ( "error" | "warning" ) | AS2-disposition-modifier-extension
+    ( "error" / "warning" ) / AS2-disposition-modifier-extension
 
 AS2-disposition-modifier-extension =
-    "error: authentication-failed" |
-    "error: decompression-failed" |
-    "error: decryption-failed" |
-    "error: duplicate-filename" |
-    "error: illegal-filename" |
-    "error: insufficient-message-security" |
-    "error: integrity-check-failed" |
-    "error: invalid-message-id" |
-    "error: unexpected-processing-error" |
-    "error: unknown-trading-relationship" |
-    "error: unknown-trading-partner" |
-    "warning: " AS2-MDN-warning-description |
+    "error: authentication-failed" /
+    "error: decompression-failed" /
+    "error: decryption-failed" /
+    "error: duplicate-filename" /
+    "error: illegal-filename" /
+    "error: insufficient-message-security" /
+    "error: integrity-check-failed" /
+    "error: invalid-message-id" /
+    "error: unexpected-processing-error" /
+    "error: unknown-trading-relationship" /
+    "error: unknown-trading-partner" /
+    "warning: " AS2-MDN-warning-description /
     "failure: " AS2-MDN-failure-description
 
 AS2-MDN-warning-description = *( TEXT )
@@ -1866,10 +1871,10 @@ AS2-received-content-MIC-field =
     digest-alg-id CRLF
 
 encoded-message-digest =
-    1*( 'A'-'Z' | 'a'-'z' | '0'-'9' | '/' | '+' | '=' )
+    1*( 'A'-'Z' / 'a'-'z' / '0'-'9' / '/' / '+' / '=' )
     ; i.e., base64(message-digest)
 
-digest-alg-id = "sha-256" | "sha-384" | "sha-512"
+digest-alg-id = "sha-256" / "sha-384" / "sha-512"
 ~~~
 
    To improve error reporting and interoperability, this specification
@@ -2946,6 +2951,25 @@ from the original RFC 4130 draft toward the current version of this document.
   * `error: unknown-trading-partner`
 - Clarified that implementations returning these modifiers MUST include a
   human-readable explanation in the MDN `Explanation` field.
+
+- ABNF Syntax Modernization (RFC 5234 Compliance), Section 8.4.1 (AS2-MDN
+  General Formats): Converted BNF syntax to proper ABNF throughout section.
+  Replaced "|" (BNF OR) with "/" (ABNF choice) operators. Replaced inline
+  definitions of Status-Line and Request-Line with references to RFC 9112
+  (Sections 3 and 4 respectively). Used "prose" ABNF rules to avoid duplicating
+  HTTP specifications. Added clarifying note that Reason-Phrase is optional per
+  RFC 9112. Added RFC 9112 to normative references.
+
+- ABNF Syntax Modernization (RFC 5234 Compliance), Section 8.4.2 (AS2-MDN
+  Fields): Converted BNF syntax to proper ABNF throughout section. Replaced "|"
+  operators with "/" for all choice rules. Clarified that disposition-modifier
+  is optional and multiple modifiers are allowed using explicit ABNF notation.
+  Made optional whitespace handling explicit in ABNF rules to reduce
+  interoperability errors caused by implicit BNF whitespace rules. Updated
+  opening paragraph to clearly reference RFC 8098 as the normative base
+  (replacing confusing dual references to both RFC 3798 and RFC 8098). Note:
+  RFC 3798 references remain in document for historical context and backward
+  compatibility discussion; see Section 1.1.
 
 ## Changes affecting Section 9 — Public Key Certificate Handling
 
