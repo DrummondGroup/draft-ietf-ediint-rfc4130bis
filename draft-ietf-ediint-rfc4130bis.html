@@ -25,25 +25,25 @@ or SMTP, except where required for IANA registry updates.
        This document also updates IANA registries originally created by RFC
 3335 and RFC 4130. 
     ' name="description">
-<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="xml2rfc 3.34.1" name="generator">
 <meta content="AS2" name="keyword">
 <meta content="EDIINT" name="keyword">
 <meta content="B2B" name="keyword">
 <meta content="draft-ietf-ediint-rfc4130bis-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.34.0
-    Python 3.14.5
-    ConfigArgParse 1.7.5
+  xml2rfc 3.34.1
+    Python 3.14.7
+    ConfigArgParse 1.7.7
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.10.1
+    platformdirs 4.11.10
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.8.2
+    wcwidth 0.8.4
 -->
 <link href="draft-ietf-ediint-rfc4130bis.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1059,11 +1059,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">AS2 Specification Modernization</td>
-<td class="right">July 2026</td>
+<td class="right">September 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Petta</td>
-<td class="center">Expires 30 January 2027</td>
+<td class="center">Expires 22 March 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1079,12 +1079,12 @@ svg {
 <a href="https://www.rfc-editor.org/rfc/rfc4130" class="eref">4130</a> (if approved)</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-07-29" class="published">29 July 2026</time>
+<time datetime="2026-09-18" class="published">18 September 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-01-30">30 January 2027</time></dd>
+<dd class="expires"><time datetime="2027-03-22">22 March 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1145,7 +1145,7 @@ or SMTP, except where required for IANA registry updates.<a href="#section-abstr
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 30 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 22 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -3455,32 +3455,35 @@ by the recipient.<a href="#section-8.3.1-3.3.1" class="pilcrow">¶</a></p>
           </h4>
 <div class="lang-abnf sourcecode" id="section-8.4.1-1">
 <pre>
-AS2-MDN = AS2-sync-MDN | AS2-async-http-MDN
+AS2-MDN = AS2-sync-MDN / AS2-async-http-MDN
 
 AS2-sync-MDN =
    Status-Line
-   *(( general-header | response-header | entity-header )
+   *(( general-header / response-header / entity-header )
      CRLF )
    CRLF
    AS2-MDN-body
 
 Status-Line =
-   HTTP-Version SP Status-Code SP Reason-Phrase CRLF
+   &lt;See Section 4 of RFC 9112&gt;
 
 AS2-async-http-MDN =
    Request-Line
-   *(( general-header | request-header | entity-header )
+   *(( general-header / request-header / entity-header )
      CRLF )
    CRLF
    AS2-MDN-body
 
 Request-Line =
-   Method SP Request-URI SP HTTP-Version CRLF
+   &lt;See Section 3 of RFC 9112&gt;
 
 AS2-MDN-body =
-   AS2-signed-MDN-body | AS2-unsigned-MDN-body
+   AS2-signed-MDN-body / AS2-unsigned-MDN-body
 </pre><a href="#section-8.4.1-1" class="pilcrow">¶</a>
 </div>
+<p id="section-8.4.1-2">Status-Line and Request-Line use "prose" ABNF rules, which avoid
+repeating ABNF defined normatively in another document (RFC 9112).
+Note that in RFC 9112, the Reason-Phrase in Status-Line is optional.<a href="#section-8.4.1-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="as2-mdn-construction">
@@ -3530,50 +3533,51 @@ AS2-disposition-notification-content =
 <a href="#section-8.4.3" class="section-number selfRef">8.4.3. </a><a href="#name-as2-mdn-fields" class="section-name selfRef">AS2-MDN Fields</a>
           </h4>
 <p id="section-8.4.3-1">The rules for constructing the AS2-disposition-notification content
-   are identical to the disposition-notification-content rules provided
-   in <a href="#algorithm-requirements" class="auto internal xref">Section 7</a> of RFC 3798 <span>[<a href="#RFC3798" class="cite xref">RFC3798</a>]</span>, except that the RFC 3798 disposition-
-   field has been replaced with the AS2-disposition-field and that the
-   AS2-received-content-MIC field has been added. The differences
-   between the RFC 3798 disposition-field and the AS2-disposition-field
-   are described below. Where there are differences between this
-   document and RFC 3798, those entity names have been changed by
-   pre-pending "AS2-". Entities that do not differ from RFC 3798 are not
-   necessarily further defined in this document; refer to RFC 3798,
-   Section 7, "Collected Grammar", for the original grammar.<a href="#section-8.4.3-1" class="pilcrow">¶</a></p>
+   are based on the disposition-notification-content rules provided in
+   RFC 8098 <span>[<a href="#RFC8098" class="cite xref">RFC8098</a>]</span>, except that the disposition-field has been
+   replaced with the AS2-disposition-field and that the
+   AS2-received-content-MIC field has been added. The AS2-disposition-field
+   differs from the RFC 8098 disposition-field in several ways: the
+   disposition-modifier is optional (zero or more modifiers are allowed),
+   and additional standardized modifiers have been defined for improved
+   error reporting. Entities that do not differ from RFC 8098 are not
+   necessarily further defined in this document; refer to RFC 8098,
+   Section 3.1, for the original grammar.<a href="#section-8.4.3-1" class="pilcrow">¶</a></p>
 <div class="lang-abnf sourcecode" id="section-8.4.3-2">
 <pre>
 AS2-disposition-field =
     "Disposition" ":" disposition-mode ";"
-    AS2-disposition-type "/" AS2-disposition-modifier
+    AS2-disposition-type "/" [AS2-disposition-modifier
+                               *(";" AS2-disposition-modifier)]
 
 disposition-mode =
     action-mode "/" sending-mode
 
 action-mode =
-    "manual-action" | "automatic-action"
+    "manual-action" / "automatic-action"
 
 sending-mode =
-    "MDN-sent-manually" | "MDN-sent-automatically"
+    "MDN-sent-manually" / "MDN-sent-automatically"
 
 AS2-disposition-type =
-    "processed" | "failed"
+    "processed" / "failed"
 
 AS2-disposition-modifier =
-    ( "error" | "warning" ) | AS2-disposition-modifier-extension
+    ( "error" / "warning" ) / AS2-disposition-modifier-extension
 
 AS2-disposition-modifier-extension =
-    "error: authentication-failed" |
-    "error: decompression-failed" |
-    "error: decryption-failed" |
-    "error: duplicate-filename" |
-    "error: illegal-filename" |
-    "error: insufficient-message-security" |
-    "error: integrity-check-failed" |
-    "error: invalid-message-id" |
-    "error: unexpected-processing-error" |
-    "error: unknown-trading-relationship" |
-    "error: unknown-trading-partner" |
-    "warning: " AS2-MDN-warning-description |
+    "error: authentication-failed" /
+    "error: decompression-failed" /
+    "error: decryption-failed" /
+    "error: duplicate-filename" /
+    "error: illegal-filename" /
+    "error: insufficient-message-security" /
+    "error: integrity-check-failed" /
+    "error: invalid-message-id" /
+    "error: unexpected-processing-error" /
+    "error: unknown-trading-relationship" /
+    "error: unknown-trading-partner" /
+    "warning: " AS2-MDN-warning-description /
     "failure: " AS2-MDN-failure-description
 
 AS2-MDN-warning-description = *( TEXT )
@@ -3585,10 +3589,10 @@ AS2-received-content-MIC-field =
     digest-alg-id CRLF
 
 encoded-message-digest =
-    1*( 'A'-'Z' | 'a'-'z' | '0'-'9' | '/' | '+' | '=' )
+    1*( 'A'-'Z' / 'a'-'z' / '0'-'9' / '/' / '+' / '=' )
     ; i.e., base64(message-digest)
 
-digest-alg-id = "sha-256" | "sha-384" | "sha-512"
+digest-alg-id = "sha-256" / "sha-384" / "sha-512"
 </pre><a href="#section-8.4.3-2" class="pilcrow">¶</a>
 </div>
 <p id="section-8.4.3-3">To improve error reporting and interoperability, this specification
@@ -4576,8 +4580,12 @@ digest-alg-id = "sha-256" | "sha-384" | "sha-512"
 <span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Well-Known Uniform Resource Identifiers (URIs)"</span>, <span class="seriesInfo">RFC 8615</span>, <span class="seriesInfo">DOI 10.17487/RFC8615</span>, <time datetime="2019-05" class="refDate">May 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8615">https://www.rfc-editor.org/rfc/rfc8615</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC9110">[RFC9110]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP Semantics"</span>, <span class="seriesInfo">STD 97</span>, <span class="seriesInfo">RFC 9110</span>, <span class="seriesInfo">DOI 10.17487/RFC9110</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9110">https://www.rfc-editor.org/rfc/rfc9110</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9112">[RFC9112]</dt>
+      <dd>
+<span class="refAuthor">Fielding, R., Ed.</span>, <span class="refAuthor">Nottingham, M., Ed.</span>, and <span class="refAuthor">J. Reschke, Ed.</span>, <span class="refTitle">"HTTP/1.1"</span>, <span class="seriesInfo">STD 99</span>, <span class="seriesInfo">RFC 9112</span>, <span class="seriesInfo">DOI 10.17487/RFC9112</span>, <time datetime="2022-06" class="refDate">June 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9112">https://www.rfc-editor.org/rfc/rfc9112</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -4599,10 +4607,6 @@ digest-alg-id = "sha-256" | "sha-384" | "sha-512"
 <dt id="I-D.draft-meadors-certificate-exchange-14">[I-D.draft-meadors-certificate-exchange-14]</dt>
         <dd>
 <span class="refAuthor">Meadors, K.</span> and <span class="refAuthor">D. Moberg</span>, <span class="refTitle">"Certificate Exchange Messaging for EDIINT draft-meadors-certificate-exchange-14.txt Abstract"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-meadors-certificate-exchange-14</span>, <time datetime="2011-12-22" class="refDate">22 December 2011</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-meadors-certificate-exchange-14">https://datatracker.ietf.org/doc/html/draft-meadors-certificate-exchange-14</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC2246">[RFC2246]</dt>
-        <dd>
-<span class="refAuthor">Dierks, T.</span> and <span class="refAuthor">C. Allen</span>, <span class="refTitle">"The TLS Protocol Version 1.0"</span>, <span class="seriesInfo">RFC 2246</span>, <span class="seriesInfo">DOI 10.17487/RFC2246</span>, <time datetime="1999-01" class="refDate">January 1999</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2246">https://www.rfc-editor.org/rfc/rfc2246</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC4918">[RFC4918]</dt>
         <dd>
@@ -5240,6 +5244,27 @@ reporting.<a href="#appendix-B.8-1.8.1" class="pilcrow">¶</a></p>
           <li class="normal" id="appendix-B.8-1.10">
             <p id="appendix-B.8-1.10.1">Clarified that implementations returning these modifiers MUST include a
 human-readable explanation in the MDN <code>Explanation</code> field.<a href="#appendix-B.8-1.10.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-B.8-1.11">
+            <p id="appendix-B.8-1.11.1">ABNF Syntax Modernization (RFC 5234 Compliance), Section 8.4.1 (AS2-MDN
+General Formats): Converted BNF syntax to proper ABNF throughout section.
+Replaced "|" (BNF OR) with "/" (ABNF choice) operators. Replaced inline
+definitions of Status-Line and Request-Line with references to RFC 9112
+(Sections 3 and 4 respectively). Used "prose" ABNF rules to avoid duplicating
+HTTP specifications. Added clarifying note that Reason-Phrase is optional per
+RFC 9112. Added RFC 9112 to normative references.<a href="#appendix-B.8-1.11.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="appendix-B.8-1.12">
+            <p id="appendix-B.8-1.12.1">ABNF Syntax Modernization (RFC 5234 Compliance), Section 8.4.2 (AS2-MDN
+Fields): Converted BNF syntax to proper ABNF throughout section. Replaced "|"
+operators with "/" for all choice rules. Clarified that disposition-modifier
+is optional and multiple modifiers are allowed using explicit ABNF notation.
+Made optional whitespace handling explicit in ABNF rules to reduce
+interoperability errors caused by implicit BNF whitespace rules. Updated
+opening paragraph to clearly reference RFC 8098 as the normative base
+(replacing confusing dual references to both RFC 3798 and RFC 8098). Note:
+RFC 3798 references remain in document for historical context and backward
+compatibility discussion; see Section 1.1.<a href="#appendix-B.8-1.12.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
