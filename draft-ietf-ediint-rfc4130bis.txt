@@ -4,9 +4,9 @@
 
 Network Working Group                                           D. Petta
 Internet-Draft                                       Drummond Group, LLC
-Obsoletes: 4130 (if approved)                          18 September 2026
+Obsoletes: 4130 (if approved)                          23 September 2026
 Intended status: Standards Track                                        
-Expires: 22 March 2027
+Expires: 27 March 2027
 
 
                     AS2 Specification Modernization
@@ -62,7 +62,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 March 2027.
+   This Internet-Draft will expire on 27 March 2027.
 
 Copyright Notice
 
@@ -756,61 +756,74 @@ Table of Contents
 4.2.  Structure of an Internet EDI MIME Message
 
       No encryption, no signature, no compression
-         - RFC2616/2045
-           - RFC1767/RFC3023 (application/EDIxxxx or /xml)
+         - RFC2616/2045 (HTTP/MIME)
+           - RFC1767/RFC3023 (payload content)
 
       No encryption, signature, no compression
-         - RFC2616/2045
+         - RFC2616/2045 (HTTP/MIME)
            - RFC1847 (multipart/signed)
-             - RFC1767/RFC3023 (application/EDIxxxx or /xml)
+             - RFC1767/RFC3023 (payload content)
              - RFC5751 (application/pkcs7-signature)
 
       Encryption, no signature, no compression
-         - RFC2616/2045
-           - RFC5751 (application/pkcs7-mime)
-             - RFC1767/RFC3023  (application/EDIxxxx or /xml) (encrypted)
+         - RFC2616/2045 (HTTP/MIME)
+           - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
+             - RFC1767/RFC3023  (payload content)
 
       Encryption, signature, no compression
-         - RFC2616/2045
-           - RFC5751 (application/pkcs7-mime)
-             - RFC1847 (multipart/signed)(encrypted)
-               - RFC1767/RFC3023  (application/EDIxxxx or /xml) (encrypted)
-               - RFC5751 (application/pkcs7-signature)(encrypted)
+         - RFC2616/2045 (HTTP/MIME)
+           - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
+             - RFC1847 (multipart/signed)
+               - RFC1767/RFC3023  (payload content)
+               - RFC5751 (application/pkcs7-signature)
 
       No encryption, no signature (with optional compression)
-         - RFC2616/2045
-           - RFC3274 (application/pkcs7-mime; CompressedData) [optional]
-             - RFC1767/RFC3023 (application/EDIxxxx or /xml)
+         - RFC2616/2045 (HTTP/MIME)
+           - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+             - RFC1767/RFC3023 (payload content)
 
-      No encryption, signature (compression may occur before or after signing)
-         - RFC2616/2045
-           - [optional RFC3274 (CompressedData) if compress-before-sign]
+      No encryption, signature (with optional compression before signing)
+         - RFC2616/2045 (HTTP/MIME)
+           - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
              - RFC1847 (multipart/signed)
-               - [optional RFC3274 (CompressedData) if compress-after-sign]
-                 - RFC1767/RFC3023 (application/EDIxxxx or /xml)
+                 - RFC1767/RFC3023 (payload content)
                  - RFC5751 (application/pkcs7-signature)
 
-      Encryption, no signature (with optional compression)
-          - RFC2616/2045
-            - RFC5751 (application/pkcs7-mime)
-              - [optional RFC3274 (CompressedData)]
-                - RFC1767/RFC3023 (application/EDIxxxx or /xml) (encrypted)
+      No encryption, signature (with optional compression after signing)
+         - RFC2616/2045 (HTTP/MIME)
+           - RFC1847 (multipart/signed)
+             - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+               - RFC1767/RFC3023 (payload content)
+               - RFC5751 (application/pkcs7-signature)
 
-      Encryption, signature (compression may occur before or after signing)
-         - RFC2616/2045
-           - RFC5751 (application/pkcs7-mime)
-             - [optional RFC3274 (CompressedData) if compress-before-sign]
-               - RFC1847 (multipart/signed) (encrypted)
-                 - [optional RFC3274 (CompressedData) if compress-after-sign]
-                 - RFC1767/RFC3023 (application/EDIxxxx or /xml) (encrypted)
-                 - RFC5751 (application/pkcs7-signature) (encrypted)
+      Encryption, no signature (with optional compression)
+          - RFC2616/2045 (HTTP/MIME)
+            - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
+              - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+                - RFC1767/RFC3023 (payload content)
+
+      Encryption, signature (with optional compression before signing)
+         - RFC2616/2045 (HTTP/MIME)
+           - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
+             - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+               - RFC1847 (multipart/signed)
+                 - RFC1767/RFC3023 (payload content)
+                 - RFC5751 (application/pkcs7-signature)
+
+      Encryption, signature (with optional compression after signing)
+         - RFC2616/2045 (HTTP/MIME)
+           - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
+             - RFC1847 (multipart/signed)
+               - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+               - RFC1767/RFC3023 (payload content)
+               - RFC5751 (application/pkcs7-signature)
 
       MDN over HTTP, no signature
-         - RFC2616/2045
+         - RFC2616/2045 (HTTP/MIME)
            - RFC3798 (message/disposition-notification)
 
       MDN over HTTP, signature
-         - RFC2616/2045
+         - RFC2616/2045 (HTTP/MIME)
            - RFC1847 (multipart/signed)
             - RFC3798 (message/disposition-notification)
             - RFC5751 (application/pkcs7-signature)
@@ -2732,14 +2745,12 @@ Table of Contents
 
 12.  Acknowledgments
 
-   Carl Hage, Karen Rosenfeld, Chuck Fenton, Russ Housley, Marc
-   Blanchet, Erik Wrammer, and many others provided valuable suggestions
-   during both the initial review of RFC 4130 that improved that
-   applicability statement and this bis specification.  The authors
-   would also like to thank the past and current vendors who have
-   participated in the Drummond AS2 interoperability testing.  Their
-   contributions have ultimately led to great improvement in the clarity
-   of this document.
+   Russ Housley, Marc Blanchet, Erik Wrammer, Asger Smidt and many
+   others provided valuable suggestions during the review of this
+   specification.  The authors would also like to thank the past and
+   current vendors who have participated in the Drummond AS2
+   interoperability testing.  Their contributions have ultimately led to
+   great improvement in the clarity of this document.
 
 13.  References
 
