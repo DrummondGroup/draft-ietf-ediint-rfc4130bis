@@ -547,9 +547,8 @@ across implementations.
             o  Synchronous or asynchronous MDN delivery
             o  Signed or unsigned MDN responses (when requested)
 
-   The specific security posture for any given trading relationship is determined by
-   business requirements and partner agreements. For detailed implementation guidance
-   on secure configurations, see {{security-considerations}}.
+   The specific security posture for any given trading relationship is determined by business requirements
+   and partner agreements. For detailed implementation guidance on secure configurations, see {{security-considerations}}.
 
    **Key Notes**
 
@@ -645,61 +644,74 @@ across implementations.
 ~~~text
 
    No encryption, no signature, no compression
-      - RFC2616/2045
-        - RFC1767/RFC3023 (application/EDIxxxx or /xml)
+      - RFC2616/2045 (HTTP/MIME)
+        - RFC1767/RFC3023 (payload content)
 
    No encryption, signature, no compression
-      - RFC2616/2045
+      - RFC2616/2045 (HTTP/MIME)
         - RFC1847 (multipart/signed)
-          - RFC1767/RFC3023 (application/EDIxxxx or /xml)
+          - RFC1767/RFC3023 (payload content)
           - RFC5751 (application/pkcs7-signature)
 
    Encryption, no signature, no compression
-      - RFC2616/2045
-        - RFC5751 (application/pkcs7-mime)
-          - RFC1767/RFC3023  (application/EDIxxxx or /xml) (encrypted)
+      - RFC2616/2045 (HTTP/MIME)
+        - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
+          - RFC1767/RFC3023  (payload content)
 
    Encryption, signature, no compression
-      - RFC2616/2045
-        - RFC5751 (application/pkcs7-mime)
-          - RFC1847 (multipart/signed)(encrypted)
-            - RFC1767/RFC3023  (application/EDIxxxx or /xml) (encrypted)
-            - RFC5751 (application/pkcs7-signature)(encrypted)
+      - RFC2616/2045 (HTTP/MIME)
+        - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
+          - RFC1847 (multipart/signed)
+            - RFC1767/RFC3023  (payload content)
+            - RFC5751 (application/pkcs7-signature)
 
    No encryption, no signature (with optional compression)
-      - RFC2616/2045
-        - RFC3274 (application/pkcs7-mime; CompressedData) [optional]
-          - RFC1767/RFC3023 (application/EDIxxxx or /xml)
+      - RFC2616/2045 (HTTP/MIME)
+        - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+          - RFC1767/RFC3023 (payload content)
 
-   No encryption, signature (compression may occur before or after signing)
-      - RFC2616/2045
-        - [optional RFC3274 (CompressedData) if compress-before-sign]
+   No encryption, signature (with optional compression before signing)
+      - RFC2616/2045 (HTTP/MIME)
+        - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
           - RFC1847 (multipart/signed)
-            - [optional RFC3274 (CompressedData) if compress-after-sign]
-              - RFC1767/RFC3023 (application/EDIxxxx or /xml)
+              - RFC1767/RFC3023 (payload content)
               - RFC5751 (application/pkcs7-signature)
 
-   Encryption, no signature (with optional compression)
-       - RFC2616/2045
-         - RFC5751 (application/pkcs7-mime)
-           - [optional RFC3274 (CompressedData)]
-             - RFC1767/RFC3023 (application/EDIxxxx or /xml) (encrypted)
+   No encryption, signature (with optional compression after signing)
+      - RFC2616/2045 (HTTP/MIME)
+        - RFC1847 (multipart/signed)
+          - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+            - RFC1767/RFC3023 (payload content)
+            - RFC5751 (application/pkcs7-signature)
 
-   Encryption, signature (compression may occur before or after signing)
-      - RFC2616/2045
-        - RFC5751 (application/pkcs7-mime)
-          - [optional RFC3274 (CompressedData) if compress-before-sign]
-            - RFC1847 (multipart/signed) (encrypted)
-              - [optional RFC3274 (CompressedData) if compress-after-sign]
-              - RFC1767/RFC3023 (application/EDIxxxx or /xml) (encrypted)
-              - RFC5751 (application/pkcs7-signature) (encrypted)
+   Encryption, no signature (with optional compression)
+       - RFC2616/2045 (HTTP/MIME)
+         - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
+           - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+             - RFC1767/RFC3023 (payload content)
+
+   Encryption, signature (with optional compression before signing)
+      - RFC2616/2045 (HTTP/MIME)
+        - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
+          - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+            - RFC1847 (multipart/signed)
+              - RFC1767/RFC3023 (payload content)
+              - RFC5751 (application/pkcs7-signature)
+
+   Encryption, signature (with optional compression after signing)
+      - RFC2616/2045 (HTTP/MIME)
+        - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
+          - RFC1847 (multipart/signed)
+            - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+            - RFC1767/RFC3023 (payload content)
+            - RFC5751 (application/pkcs7-signature)
 
    MDN over HTTP, no signature
-      - RFC2616/2045
+      - RFC2616/2045 (HTTP/MIME)
         - RFC3798 (message/disposition-notification)
 
    MDN over HTTP, signature
-      - RFC2616/2045
+      - RFC2616/2045 (HTTP/MIME)
         - RFC1847 (multipart/signed)
          - RFC3798 (message/disposition-notification)
          - RFC5751 (application/pkcs7-signature)
@@ -855,7 +867,7 @@ partners.
 ##  HTTP Response Status Codes
 
    Implementations MUST use standard HTTP response codes to signal the
-   outcome of the message transfer.  The meaning of the HTTP status code is
+   outcome of the message transfer. The meaning of the HTTP status code is
    limited to the success or failure of the transport operation itself,
    not the semantic processing of the AS2 message content. For
    example, the status code 401, together with the WWW-Authenticate
@@ -870,9 +882,9 @@ partners.
    synchronous transfers by signaling progress while decryption,
    signature verification, or storage continues.
 
-   Use of 102 (Processing) is OPTIONAL.  It has been deprecated in later
+   Use of 102 (Processing) is OPTIONAL. It has been deprecated in later
    HTTP specifications and **MUST NOT** be used with HTTP/2 or HTTP/3,
-   where interim responses have different semantics.  Implementations
+   where interim responses have different semantics. Implementations
    that do not receive a 102 response MUST NOT assume that a failure has
    occurred solely because no interim status was returned. They SHOULD
    continue waiting for the final status response for at least the duration
@@ -962,7 +974,7 @@ partners.
    Implementations MAY also support **AS2 Restart**, which allows a
    partially uploaded message to resume from the point of interruption
    rather than retransmitting the entire payload.  This optional feature
-   is defined in [I-D.draft-harding-as2-restart-02].  Implementations supporting
+   is defined in [I-D.draft-harding-as2-restart-02]. Implementations supporting
    Restart MUST ensure message integrity through signature or checksum
    validation of all resumed segments.
 
@@ -972,7 +984,7 @@ partners.
    in AS2 interoperability testing and provide a useful operational baseline
    for error-recovery behavior.
 
-   The objective of error recovery is reliability, not speed.  Systems
+   The objective of error recovery is reliability, not speed. Systems
    SHOULD favor successful delivery over strict timing, provided that
    duplicate protection and security requirements are preserved.
 
@@ -1411,7 +1423,7 @@ RFC 3798 for backward compatibility.
    of the POST on the same HTTP connection.
 
    The synchronous response MUST indicate transfer-layer success or
-   failure, such as `200 OK` or `202 Accepted`.  The format of this
+   failure, such as `200 OK` or `202 Accepted`. The format of this
    response MAY be identical to that used when no AS2-MDN is requested.
 
    The asynchronous AS2-MDN is sent on a separate HTTP or HTTPS
@@ -1505,7 +1517,7 @@ RFC 3798 for backward compatibility.
    reflect current AS2 practice while maintaining backward compatibility (see {{backward-compatibility-and-interoperability}}).
 
    When requesting MDN-based receipts, the originator supplies
-   additional extension headers that precede the message body.  These
+   additional extension headers that precede the message body. These
    header "tags" are as follows:
 
    A Message-ID header is added to support message reconciliation, so
@@ -2586,13 +2598,11 @@ digest-alg-id = "sha-256" / "sha-384" / "sha-512"
 
 
 # Acknowledgments
-   Carl Hage, Karen Rosenfeld, Chuck Fenton, Russ Housley, Marc Blanchet,
-   Erik Wrammer, and many others provided valuable suggestions during both
-   the initial review of RFC 4130 that improved that applicability statement
-   and this bis specification. The authors would also like to thank the past
-   and current vendors who have participated in the Drummond AS2 interoperability
-   testing. Their contributions have ultimately led to great improvement in the
-   clarity of this document.
+   Russ Housley, Marc Blanchet, Erik Wrammer, Asger Smidt and many others
+   provided valuable suggestions during the review of this specification.
+   The authors would also like to thank the past and current vendors who have
+   participated in the Drummond AS2 interoperability testing. Their contributions
+   have ultimately led to great improvement in the clarity of this document.
 
 --- back
 
