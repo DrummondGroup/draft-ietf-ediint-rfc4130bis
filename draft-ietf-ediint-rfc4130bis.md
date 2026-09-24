@@ -655,56 +655,56 @@ across implementations.
 
    Encryption, no signature, no compression
       - RFC2616/2045 (HTTP/MIME)
-        - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
-          - RFC1767/RFC3023  (payload content)
+        - RFC5751 (application/pkcs7-mime; smime-type=enveloped-data) (everything below inside this part is encrypted)
+          - RFC1767/RFC3023 (payload content)
 
    Encryption, signature, no compression
       - RFC2616/2045 (HTTP/MIME)
-        - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
+        - RFC5751 (application/pkcs7-mime; smime-type=enveloped-data) (everything below inside this part is encrypted)
           - RFC1847 (multipart/signed)
-            - RFC1767/RFC3023  (payload content)
+            - RFC1767/RFC3023 (payload content)
             - RFC5751 (application/pkcs7-signature)
 
-   No encryption, no signature (with optional compression)
+   No encryption, no signature, compression
       - RFC2616/2045 (HTTP/MIME)
-        - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+        - RFC3274 (application/pkcs7-mime; smime-type=compressed-data) (everything below inside this part is compressed)
           - RFC1767/RFC3023 (payload content)
 
-   No encryption, signature (with optional compression before signing)
+   No encryption, signature, compression before signing
       - RFC2616/2045 (HTTP/MIME)
-        - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+        - RFC1847 (multipart/signed)
+          - RFC3274 (application/pkcs7-mime; smime-type=compressed-data) (everything below inside this part is compressed)
+            - RFC1767/RFC3023 (payload content)
+          - RFC5751 (application/pkcs7-signature)
+
+   No encryption, signature, compression after signing
+      - RFC2616/2045 (HTTP/MIME)
+        - RFC3274 (application/pkcs7-mime; smime-type=compressed-data) (everything below inside this part is compressed)
           - RFC1847 (multipart/signed)
               - RFC1767/RFC3023 (payload content)
               - RFC5751 (application/pkcs7-signature)
 
-   No encryption, signature (with optional compression after signing)
-      - RFC2616/2045 (HTTP/MIME)
-        - RFC1847 (multipart/signed)
-          - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
-            - RFC1767/RFC3023 (payload content)
-            - RFC5751 (application/pkcs7-signature)
-
-   Encryption, no signature (with optional compression)
+   Encryption, no signature, compression
        - RFC2616/2045 (HTTP/MIME)
-         - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
-           - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+         - RFC5751 (application/pkcs7-mime; smime-type=enveloped-data) (everything below inside this part is encrypted)
+           - RFC3274 (application/pkcs7-mime; smime-type=compressed-data) (everything below inside this part is compressed)
              - RFC1767/RFC3023 (payload content)
 
-   Encryption, signature (with optional compression before signing)
+   Encryption, signature, compression before signing
       - RFC2616/2045 (HTTP/MIME)
-        - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
-          - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
+        - RFC5751 (application/pkcs7-mime; smime-type=enveloped-data) (everything below inside this part is encrypted)
+          - RFC1847 (multipart/signed)
+            - RFC3274 (application/pkcs7-mime; smime-type=compressed-data) (everything below inside this part is compressed)
+              - RFC1767/RFC3023 (payload content)
+            - RFC5751 (application/pkcs7-signature)
+
+   Encryption, signature, compression after signing
+      - RFC2616/2045 (HTTP/MIME)
+        - RFC5751 (application/pkcs7-mime; smime-type=enveloped-data) (everything below inside this part is encrypted)
+          - RFC3274 (application/pkcs7-mime; smime-type=compressed-data) (everything below inside this part is compressed)
             - RFC1847 (multipart/signed)
               - RFC1767/RFC3023 (payload content)
               - RFC5751 (application/pkcs7-signature)
-
-   Encryption, signature (with optional compression after signing)
-      - RFC2616/2045 (HTTP/MIME)
-        - RFC5751 (application/pkcs7-mime) (everything below inside this part is encrypted)
-          - RFC1847 (multipart/signed)
-            - [optional RFC3274 (CompressedData) (everything below inside this part is compressed)]
-            - RFC1767/RFC3023 (payload content)
-            - RFC5751 (application/pkcs7-signature)
 
    MDN over HTTP, no signature
       - RFC2616/2045 (HTTP/MIME)
