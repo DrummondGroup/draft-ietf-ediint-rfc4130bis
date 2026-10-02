@@ -727,22 +727,21 @@ across implementations.
          o  Many implementations compress before signing and encrypting to maximize size
             reduction, but compression after signing and before encrypting MUST also be supported.
 
-         o  Although all MIME content types MAY be supported, the following
+         o  Implementations SHOULD ideally be able to handle any content type,
+            transferring the binary data without changes, however the following
             MIME content types MUST be supported:
 
                 Content-type: multipart/signed
                 Content-Type: multipart/report
                 Content-type: message/disposition-notification
-                Content-Type: application/PKCS7-signature
-                Content-Type: application/PKCS7-mime
-
-         o  Implementations SHOULD support the following content types based on
-            intended use:
-
-                Content-Type: application/EDI-X12 (for ANSI X12 EDI)
-                Content-Type: application/EDIFACT (for UN/EDIFACT EDI)
+                Content-Type: application/pkcs7-signature
+                Content-Type: application/pkcs7-mime
+                Content-Type: application/edi-x12
+                Content-Type: application/edifact
                 Content-Type: application/edi-consent
-                Content-Type: application/XML (for XML-based structured data)
+                Content-Type: application/xml
+                Content-Type: application/json
+                Content-Type: application/octet-stream
 
 # HTTP Considerations
 
