@@ -1059,11 +1059,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">AS2 Specification Modernization</td>
-<td class="right">September 2026</td>
+<td class="right">October 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Petta</td>
-<td class="center">Expires 28 March 2027</td>
+<td class="center">Expires 5 April 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1079,12 +1079,12 @@ svg {
 <a href="https://www.rfc-editor.org/rfc/rfc4130" class="eref">4130</a> (if approved)</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-09-24" class="published">24 September 2026</time>
+<time datetime="2026-10-02" class="published">2 October 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-03-28">28 March 2027</time></dd>
+<dd class="expires"><time datetime="2027-04-05">5 April 2027</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1145,7 +1145,7 @@ or SMTP, except where required for IANA registry updates.<a href="#section-abstr
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 28 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 5 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2308,22 +2308,21 @@ across implementations.<a href="#section-1.3-3" class="pilcrow">¶</a></p>
      o  Many implementations compress before signing and encrypting to maximize size
         reduction, but compression after signing and before encrypting MUST also be supported.
 
-     o  Although all MIME content types MAY be supported, the following
+     o  Implementations SHOULD ideally be able to handle any content type,
+        transferring the binary data without changes, however the following
         MIME content types MUST be supported:
 
             Content-type: multipart/signed
             Content-Type: multipart/report
             Content-type: message/disposition-notification
-            Content-Type: application/PKCS7-signature
-            Content-Type: application/PKCS7-mime
-
-     o  Implementations SHOULD support the following content types based on
-        intended use:
-
-            Content-Type: application/EDI-X12 (for ANSI X12 EDI)
-            Content-Type: application/EDIFACT (for UN/EDIFACT EDI)
+            Content-Type: application/pkcs7-signature
+            Content-Type: application/pkcs7-mime
+            Content-Type: application/edi-x12
+            Content-Type: application/edifact
             Content-Type: application/edi-consent
-            Content-Type: application/XML (for XML-based structured data)
+            Content-Type: application/xml
+            Content-Type: application/json
+            Content-Type: application/octet-stream
 </pre><a href="#section-4.2-3" class="pilcrow">¶</a>
 </div>
 </section>
